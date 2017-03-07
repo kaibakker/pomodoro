@@ -38,25 +38,32 @@ const TaskElement = SortableElement(({item}) =>
   <li style={{backgroundColor: item.color}}>
     {item.label}
     <Counter logs={item.logs} />
-
+    <a onClick={this}>archive</a>
   </li>
 );
 
 const TaskContainer = SortableContainer(({items}) =>
   <ul>
-      {items.map((item, index) =>
-          <TaskElement key={`item-${index}`} index={index} item={item} />
-      )}
+    {items.map((item, index) =>
+        <TaskElement key={`item-${index}`} index={index} item={item}  />
+    )}
   </ul>
 );
 
+var tasks = JSON.parse(localStorage.getItem('tasks')) || [
+  {label: 'Not active', color: 'red', logs: [{ startedAt: Date.now() }], status: 'created' },
+  {label: 'Lunch', color: randomColor({luminosity: 'light'}), logs: [], status: 'created' },
+  {label: 'Break', color: randomColor({luminosity: 'light'}), logs: [], status: 'created' },
+];
+
+
 class TaskList extends Component {
     state = {
-      items: this.props.tasks
+      items: tasks
     }
     shouldCancelStart = (e) => {
       if (['input', 'textarea', 'select', 'option', 'button'].indexOf(e.target.tagName.toLowerCase()) !== -1) {
-					return true; // Return true to cancel sorting
+				return true; // Return true to cancel sorting
       }
     }
     onSortEnd = ({oldIndex, newIndex}) => {
@@ -81,9 +88,8 @@ class TaskList extends Component {
     createTask = (event) => {
       var items = this.state.items
       items.push({ label: event.target.value, color: randomColor({ luminosity: 'light' }), logs: []})
-      this.setState({
-        items: items
-      });
+      this.setState({ items: items });
+
       this.saveTasksToLocalStorage(items)
     };
     saveTasksToLocalStorage = (items) => {
@@ -92,7 +98,7 @@ class TaskList extends Component {
     render() {
       return (
         <div>
-          <TaskContainer items={this.state.items} onSortEnd={this.onSortEnd} shouldCancelStart={this.shouldCancelStart} />
+          <TaskContainer items={this.state.items} onSortEnd={this.onSortEnd} shouldCancelStart={this.shouldCancelStart}/>
 
           <input type='text' onBlur={this.createTask} />
         </div>

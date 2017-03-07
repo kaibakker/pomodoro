@@ -1,29 +1,30 @@
 import React from 'react';
 
-
-
 var TaskList = require('./TaskList')
+var LogList = require('./LogList')
+var PomodoroForm = require('./PomodoroForm')
+var Pomodoro = require('./Pomodoro')
+
+
+import { Router, Route, Link, browserHistory } from 'react-router'
 
 import './../App.css';
 
 import randomColor from 'randomcolor'
 
 
-var tasks = JSON.parse(localStorage.getItem('tasks')) || [
-  {label: 'Not active', color: 'red', logs: [{ startedAt: Date.now() }]},
-  {label: 'Lunch', color: randomColor({luminosity: 'light'}), logs: []},
-  {label: 'Break', color: randomColor({luminosity: 'light'}), logs: []},
-];
-
-
 var App = React.createClass({
-  getInitialState() {
-    return ({
-      tasks: tasks,
-    })
-  },
   render() {
-    return (<TaskList tasks={tasks}/>)
+    return (
+      <Router history={browserHistory}>
+        <Route path="/logs" component={LogList}/>
+        <Route path="/pomodoro/new" component={PomodoroForm} />
+        <Route path="/pomodoro" component={Pomodoro} />
+        <Route path="/" component={TaskList}>
+          <Route path="todo" component={TaskList}/>
+        </Route>
+      </Router>
+    )
   }
 })
 
